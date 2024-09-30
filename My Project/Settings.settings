@@ -1,0 +1,12 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="My" GeneratedClassName="MySettings" UseMySettingsClassName="true">
+  <Profiles />
+  <Settings>
+    <Setting Name="GRB_Etiquetas_WebEtiqueta_Etiquetas" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://192.168.0.5:7047/BC180/WS/GRB/Codeunit/Etiquetas</Value>
+    </Setting>
+    <Setting Name="Printer_Task_WebPrinter_PrinterDocument" Type="(Web Service URL)" Scope="Application">
+      <Value Profile="(Default)">http://192.168.1.200:7047/BC180/WS/Crivelsa/Codeunit/PrinterDocument</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

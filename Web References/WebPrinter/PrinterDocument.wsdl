@@ -1,0 +1,495 @@
+<?xml version="1.0" encoding="utf-8"?>
+<definitions xmlns:tns="urn:microsoft-dynamics-schemas/codeunit/PrinterDocument" targetNamespace="urn:microsoft-dynamics-schemas/codeunit/PrinterDocument" xmlns="http://schemas.xmlsoap.org/wsdl/">
+  <types>
+    <schema elementFormDefault="qualified" targetNamespace="urn:microsoft-dynamics-schemas/codeunit/PrinterDocument" xmlns="http://www.w3.org/2001/XMLSchema">
+      <element name="Etiquetas_Envios">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="Etiquetas_Envios_Result">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="return_value" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="Etiquetas_GS1">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="Etiquetas_GS1_Result">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="return_value" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="Etiquetas_Kits_GS1">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="Etiquetas_Kits_GS1_Result">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="return_value" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="Etiquetas_Kits">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="Etiquetas_Kits_Result">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="return_value" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GTIN14_DC">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="numero" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="GTIN14_DC_Result">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="return_value" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="Impresion_Albaran">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="documentoNo" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="Impresion_Albaran_Result">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="Impresion_Envio">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="envioNo" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="Impresion_Envio_Result">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="Impresion_Etiqueta_Kit">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="assNo" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="copias" type="int" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="Impresion_Etiqueta_Kit_Result">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="Impresion_Etiquetas_Envio">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="customerNo" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="shipCode" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="copias" type="int" />
+            <element minOccurs="1" maxOccurs="1" name="impresora" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="Impresion_Etiquetas_Envio_Result">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="Impresion_GS1">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="referencia" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="lote" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="caducidad" type="date" />
+            <element minOccurs="1" maxOccurs="1" name="copias" type="int" />
+            <element minOccurs="1" maxOccurs="1" name="impresora" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="Impresion_GS1_Result">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="Impresion_Hoja_Kit_Registrada">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="assNo" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="Impresion_Hoja_Kit_Registrada_Result">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="Impresion_Hoja_Kit">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="assNo" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="Impresion_Hoja_Kit_Result">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="Pendiente_PDF">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+      <element name="Pendiente_PDF_Result">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="return_value" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="Printer_Label">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="tipoEtiqueta" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="Printer_Label_Result">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="return_value" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="resolver">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="xId" type="int" />
+            <element minOccurs="1" maxOccurs="1" name="xError" type="string" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="resolver_Result">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
+    </schema>
+  </types>
+  <message name="Etiquetas_Envios">
+    <part name="parameters" element="tns:Etiquetas_Envios" />
+  </message>
+  <message name="Etiquetas_Envios_Result">
+    <part name="parameters" element="tns:Etiquetas_Envios_Result" />
+  </message>
+  <message name="Etiquetas_GS1">
+    <part name="parameters" element="tns:Etiquetas_GS1" />
+  </message>
+  <message name="Etiquetas_GS1_Result">
+    <part name="parameters" element="tns:Etiquetas_GS1_Result" />
+  </message>
+  <message name="Etiquetas_Kits_GS1">
+    <part name="parameters" element="tns:Etiquetas_Kits_GS1" />
+  </message>
+  <message name="Etiquetas_Kits_GS1_Result">
+    <part name="parameters" element="tns:Etiquetas_Kits_GS1_Result" />
+  </message>
+  <message name="Etiquetas_Kits">
+    <part name="parameters" element="tns:Etiquetas_Kits" />
+  </message>
+  <message name="Etiquetas_Kits_Result">
+    <part name="parameters" element="tns:Etiquetas_Kits_Result" />
+  </message>
+  <message name="GTIN14_DC">
+    <part name="parameters" element="tns:GTIN14_DC" />
+  </message>
+  <message name="GTIN14_DC_Result">
+    <part name="parameters" element="tns:GTIN14_DC_Result" />
+  </message>
+  <message name="Impresion_Albaran">
+    <part name="parameters" element="tns:Impresion_Albaran" />
+  </message>
+  <message name="Impresion_Albaran_Result">
+    <part name="parameters" element="tns:Impresion_Albaran_Result" />
+  </message>
+  <message name="Impresion_Envio">
+    <part name="parameters" element="tns:Impresion_Envio" />
+  </message>
+  <message name="Impresion_Envio_Result">
+    <part name="parameters" element="tns:Impresion_Envio_Result" />
+  </message>
+  <message name="Impresion_Etiqueta_Kit">
+    <part name="parameters" element="tns:Impresion_Etiqueta_Kit" />
+  </message>
+  <message name="Impresion_Etiqueta_Kit_Result">
+    <part name="parameters" element="tns:Impresion_Etiqueta_Kit_Result" />
+  </message>
+  <message name="Impresion_Etiquetas_Envio">
+    <part name="parameters" element="tns:Impresion_Etiquetas_Envio" />
+  </message>
+  <message name="Impresion_Etiquetas_Envio_Result">
+    <part name="parameters" element="tns:Impresion_Etiquetas_Envio_Result" />
+  </message>
+  <message name="Impresion_GS1">
+    <part name="parameters" element="tns:Impresion_GS1" />
+  </message>
+  <message name="Impresion_GS1_Result">
+    <part name="parameters" element="tns:Impresion_GS1_Result" />
+  </message>
+  <message name="Impresion_Hoja_Kit_Registrada">
+    <part name="parameters" element="tns:Impresion_Hoja_Kit_Registrada" />
+  </message>
+  <message name="Impresion_Hoja_Kit_Registrada_Result">
+    <part name="parameters" element="tns:Impresion_Hoja_Kit_Registrada_Result" />
+  </message>
+  <message name="Impresion_Hoja_Kit">
+    <part name="parameters" element="tns:Impresion_Hoja_Kit" />
+  </message>
+  <message name="Impresion_Hoja_Kit_Result">
+    <part name="parameters" element="tns:Impresion_Hoja_Kit_Result" />
+  </message>
+  <message name="Pendiente_PDF">
+    <part name="parameters" element="tns:Pendiente_PDF" />
+  </message>
+  <message name="Pendiente_PDF_Result">
+    <part name="parameters" element="tns:Pendiente_PDF_Result" />
+  </message>
+  <message name="Printer_Label">
+    <part name="parameters" element="tns:Printer_Label" />
+  </message>
+  <message name="Printer_Label_Result">
+    <part name="parameters" element="tns:Printer_Label_Result" />
+  </message>
+  <message name="resolver">
+    <part name="parameters" element="tns:resolver" />
+  </message>
+  <message name="resolver_Result">
+    <part name="parameters" element="tns:resolver_Result" />
+  </message>
+  <portType name="PrinterDocument_Port">
+    <operation name="Etiquetas_Envios">
+      <input name="Etiquetas_Envios" message="tns:Etiquetas_Envios" />
+      <output name="Etiquetas_Envios_Result" message="tns:Etiquetas_Envios_Result" />
+    </operation>
+    <operation name="Etiquetas_GS1">
+      <input name="Etiquetas_GS1" message="tns:Etiquetas_GS1" />
+      <output name="Etiquetas_GS1_Result" message="tns:Etiquetas_GS1_Result" />
+    </operation>
+    <operation name="Etiquetas_Kits_GS1">
+      <input name="Etiquetas_Kits_GS1" message="tns:Etiquetas_Kits_GS1" />
+      <output name="Etiquetas_Kits_GS1_Result" message="tns:Etiquetas_Kits_GS1_Result" />
+    </operation>
+    <operation name="Etiquetas_Kits">
+      <input name="Etiquetas_Kits" message="tns:Etiquetas_Kits" />
+      <output name="Etiquetas_Kits_Result" message="tns:Etiquetas_Kits_Result" />
+    </operation>
+    <operation name="GTIN14_DC">
+      <input name="GTIN14_DC" message="tns:GTIN14_DC" />
+      <output name="GTIN14_DC_Result" message="tns:GTIN14_DC_Result" />
+    </operation>
+    <operation name="Impresion_Albaran">
+      <input name="Impresion_Albaran" message="tns:Impresion_Albaran" />
+      <output name="Impresion_Albaran_Result" message="tns:Impresion_Albaran_Result" />
+    </operation>
+    <operation name="Impresion_Envio">
+      <input name="Impresion_Envio" message="tns:Impresion_Envio" />
+      <output name="Impresion_Envio_Result" message="tns:Impresion_Envio_Result" />
+    </operation>
+    <operation name="Impresion_Etiqueta_Kit">
+      <input name="Impresion_Etiqueta_Kit" message="tns:Impresion_Etiqueta_Kit" />
+      <output name="Impresion_Etiqueta_Kit_Result" message="tns:Impresion_Etiqueta_Kit_Result" />
+    </operation>
+    <operation name="Impresion_Etiquetas_Envio">
+      <input name="Impresion_Etiquetas_Envio" message="tns:Impresion_Etiquetas_Envio" />
+      <output name="Impresion_Etiquetas_Envio_Result" message="tns:Impresion_Etiquetas_Envio_Result" />
+    </operation>
+    <operation name="Impresion_GS1">
+      <input name="Impresion_GS1" message="tns:Impresion_GS1" />
+      <output name="Impresion_GS1_Result" message="tns:Impresion_GS1_Result" />
+    </operation>
+    <operation name="Impresion_Hoja_Kit_Registrada">
+      <input name="Impresion_Hoja_Kit_Registrada" message="tns:Impresion_Hoja_Kit_Registrada" />
+      <output name="Impresion_Hoja_Kit_Registrada_Result" message="tns:Impresion_Hoja_Kit_Registrada_Result" />
+    </operation>
+    <operation name="Impresion_Hoja_Kit">
+      <input name="Impresion_Hoja_Kit" message="tns:Impresion_Hoja_Kit" />
+      <output name="Impresion_Hoja_Kit_Result" message="tns:Impresion_Hoja_Kit_Result" />
+    </operation>
+    <operation name="Pendiente_PDF">
+      <input name="Pendiente_PDF" message="tns:Pendiente_PDF" />
+      <output name="Pendiente_PDF_Result" message="tns:Pendiente_PDF_Result" />
+    </operation>
+    <operation name="Printer_Label">
+      <input name="Printer_Label" message="tns:Printer_Label" />
+      <output name="Printer_Label_Result" message="tns:Printer_Label_Result" />
+    </operation>
+    <operation name="resolver">
+      <input name="resolver" message="tns:resolver" />
+      <output name="resolver_Result" message="tns:resolver_Result" />
+    </operation>
+  </portType>
+  <binding name="PrinterDocument_Binding" type="tns:PrinterDocument_Port">
+    <binding transport="http://schemas.xmlsoap.org/soap/http" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+    <operation name="Etiquetas_Envios">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/PrinterDocument:Etiquetas_Envios" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="Etiquetas_Envios">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="Etiquetas_Envios_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="Etiquetas_GS1">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/PrinterDocument:Etiquetas_GS1" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="Etiquetas_GS1">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="Etiquetas_GS1_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="Etiquetas_Kits_GS1">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/PrinterDocument:Etiquetas_Kits_GS1" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="Etiquetas_Kits_GS1">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="Etiquetas_Kits_GS1_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="Etiquetas_Kits">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/PrinterDocument:Etiquetas_Kits" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="Etiquetas_Kits">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="Etiquetas_Kits_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="GTIN14_DC">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/PrinterDocument:GTIN14_DC" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="GTIN14_DC">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="GTIN14_DC_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="Impresion_Albaran">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/PrinterDocument:Impresion_Albaran" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="Impresion_Albaran">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="Impresion_Albaran_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="Impresion_Envio">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/PrinterDocument:Impresion_Envio" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="Impresion_Envio">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="Impresion_Envio_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="Impresion_Etiqueta_Kit">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/PrinterDocument:Impresion_Etiqueta_Kit" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="Impresion_Etiqueta_Kit">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="Impresion_Etiqueta_Kit_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="Impresion_Etiquetas_Envio">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/PrinterDocument:Impresion_Etiquetas_Envio" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="Impresion_Etiquetas_Envio">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="Impresion_Etiquetas_Envio_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="Impresion_GS1">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/PrinterDocument:Impresion_GS1" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="Impresion_GS1">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="Impresion_GS1_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="Impresion_Hoja_Kit_Registrada">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/PrinterDocument:Impresion_Hoja_Kit_Registrada" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="Impresion_Hoja_Kit_Registrada">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="Impresion_Hoja_Kit_Registrada_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="Impresion_Hoja_Kit">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/PrinterDocument:Impresion_Hoja_Kit" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="Impresion_Hoja_Kit">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="Impresion_Hoja_Kit_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="Pendiente_PDF">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/PrinterDocument:Pendiente_PDF" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="Pendiente_PDF">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="Pendiente_PDF_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="Printer_Label">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/PrinterDocument:Printer_Label" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="Printer_Label">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="Printer_Label_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="resolver">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/PrinterDocument:resolver" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="resolver">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="resolver_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+  </binding>
+  <service name="PrinterDocument">
+    <port name="PrinterDocument_Port" binding="tns:PrinterDocument_Binding">
+      <address location="http://192.168.1.200:7047/BC180/WS/Crivelsa/Codeunit/PrinterDocument" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+    </port>
+  </service>
+</definitions>
