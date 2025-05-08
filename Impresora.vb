@@ -1,5 +1,6 @@
 ﻿Option Explicit On
 
+Imports ZXing
 Imports ThoughtWorks.QRCode
 Imports ThoughtWorks.QRCode.Codec
 Imports ThoughtWorks.QRCode.Codec.Data
@@ -9,7 +10,6 @@ Imports System
 Imports System.IO
 Imports iTextSharp.text
 Imports iTextSharp.text.pdf
-Imports RawPrint
 Imports DataMatrix
 Imports DataMatrix.net
 
@@ -34,6 +34,11 @@ Class Impresora
                     NewPaperSize = New Printing.PaperSize("ZPL", 393, 595)
                     AddHandler PrintDoc.PrintPage, AddressOf Kit_PrintPage
                     LandScape = True
+                Case "KIT ESPECIAL"
+                    Log_Activity("Etiqueta Kit Especial: " + dt.Item("Origen").ToString)
+                    NewPaperSize = New Printing.PaperSize("ZPL", 393, 595)
+                    AddHandler PrintDoc.PrintPage, AddressOf Kit_PrintPage_E
+                    LandScape = True
                 Case "KIT GS1"
                     Log_Activity("Etiqueta Kit: " + dt.Item("Origen").ToString)
                     NewPaperSize = New Printing.PaperSize("ZPL", 393, 595)
@@ -51,7 +56,9 @@ Class Impresora
                     LandScape = False
             End Select
 
+
             If Not IsNothing(NewPaperSize) Then
+                'PrintDoc.PrinterSettings.PrinterName = "CutePDF Writer"
                 PrintDoc.PrinterSettings.PrinterName = dt.Item("Printer")
                 PrintDoc.DefaultPageSettings.Landscape = LandScape
                 PrintDoc.DefaultPageSettings.Margins.Left = 0
@@ -60,109 +67,530 @@ Class Impresora
 
                 PrintDoc.PrinterSettings.Copies = dt.Item("Copias")
 
-                PrintDoc.Print()
+                Try
+                    PrintDoc.Print()
+                Catch ex As Exception
+                    Log_Activity("Error al imprimir: " + ex.Message)
+                End Try
+
             End If
         Next
     End Sub
 
-
     Private Sub Kit_PrintPage(ByVal sender As System.Object, e As PrintPageEventArgs)
         Dim Fuente As System.Drawing.Font
+        Dim FuenteMini As System.Drawing.Font
+        Dim FuenteBold As System.Drawing.Font
         Dim Pt As New System.Drawing.Point
         Dim Talla As New SizeF
         Dim Raya As Pen = New Pen(Color.Black, 0.5)
         Dim Brocha As Brush = New SolidBrush(Color.GreenYellow)
         Dim Paginas As Integer = 1
+        Dim MargenIzq As Integer = 3.0
+        Dim MargenSup As Integer = 3
+        Dim UdiQR As System.Drawing.Bitmap
+        Dim LogoCrivelsa As System.Drawing.Bitmap
+        Dim LogoCE As System.Drawing.Bitmap
+        Dim Logo2 As System.Drawing.Bitmap
+        Dim LogoEmbalaje As System.Drawing.Bitmap
+        Dim LogoEsteril As System.Drawing.Bitmap
+        Dim LogoMD As System.Drawing.Bitmap
+        Dim LogoAviso As System.Drawing.Bitmap
+        Dim LogoREF As System.Drawing.Bitmap
+        Dim LogoLOT As System.Drawing.Bitmap
+        Dim LogoUDI As System.Drawing.Bitmap
+        Dim LogoCaducidad As System.Drawing.Bitmap
+        Dim UdiStr As String = ""
+        Dim writer As New BarcodeWriter()
+        writer.Format = BarcodeFormat.DATA_MATRIX
+
+        ' Opciones de imagen
+        writer.Options = New ZXing.Common.EncodingOptions With {
+            .Height = 19,
+            .Width = 19,
+            .Margin = 1
+        }
+
+        LogoCrivelsa = System.Drawing.Image.FromFile("C:\Navision\Printer-Task\Imagen\Crivelsa.png")
+        LogoEmbalaje = System.Drawing.Image.FromFile("C:\Navision\Printer-Task\Imagen\Embalaje.png")
+        Logo2 = System.Drawing.Image.FromFile("C:\Navision\Printer-Task\Imagen\Logo2.png")
+        LogoAviso = System.Drawing.Image.FromFile("C:\Navision\Printer-Task\Imagen\Aviso.png")
+        LogoEsteril = System.Drawing.Image.FromFile("C:\Navision\Printer-Task\Imagen\Esteril.png")
+        LogoMD = System.Drawing.Image.FromFile("C:\Navision\Printer-Task\Imagen\MD.png")
+        LogoCE = System.Drawing.Image.FromFile("C:\Navision\Printer-Task\Imagen\CE.png")
+        LogoCaducidad = System.Drawing.Image.FromFile("C:\Navision\Printer-Task\Imagen\FechaCaducidad.png")
+        LogoLOT = System.Drawing.Image.FromFile("C:\Navision\Printer-Task\Imagen\LOT.png")
+        LogoREF = System.Drawing.Image.FromFile("C:\Navision\Printer-Task\Imagen\REF.png")
+        LogoUDI = System.Drawing.Image.FromFile("C:\Navision\Printer-Task\Imagen\UDI.png")
+
 
         For Each dt2 As DataRow In dt.GetChildRows(ds.Tables(0).ChildRelations(0))
             e.Graphics.PageUnit = GraphicsUnit.Millimeter
 
+            ' Generar imagen
+
+            Dim FechaRegistro As Date
+            Date.TryParseExact(dt2.Item("PostingDate"), "dd/MM/yyyy", Globalization.CultureInfo.InvariantCulture, Globalization.DateTimeStyles.None, FechaRegistro)
+            Dim FechaCaducidad As Date
+            Date.TryParseExact(dt2.Item("ExpirationDate"), "dd/MM/yyyy", Globalization.CultureInfo.InvariantCulture, Globalization.DateTimeStyles.None, FechaCaducidad)
+
+            UdiStr = $"(01){dt2.Item("AECOC")}(17){FechaCaducidad.ToString("ddMMyy")}(11){FechaRegistro.ToString("ddMMyy")}(10){dt2.Item("LotNo")}"
+            UdiQR = writer.Write(UdiStr)
+
             ' DATOS
             '--------
 
-            Fuente = New System.Drawing.Font("Arial", 10, FontStyle.Regular)
+            e.Graphics.DrawRectangle(Raya, MargenIzq, MargenSup, 144, 28)
 
-            Pt.X = 5
-            Pt.Y = 3
-            e.Graphics.DrawString("Nombre:", Fuente, Brushes.Black, Pt)
+            Pt.X = MargenIzq + 2
+            Pt.Y = MargenSup + 2
+            e.Graphics.DrawImage(LogoCrivelsa, Pt.X, Pt.Y, 15, 15)
 
-            Pt.X = 22
+            Pt.X = MargenIzq + 78
+            Pt.Y = MargenSup + 6
+            e.Graphics.DrawImage(LogoEmbalaje, Pt.X, Pt.Y, 7, 7)
+            Pt.X = MargenIzq + 88
+            e.Graphics.DrawImage(Logo2, Pt.X, Pt.Y, 7, 7)
+            Pt.X = MargenIzq + 68
+            Pt.Y = MargenSup + 14
+            e.Graphics.DrawImage(LogoAviso, Pt.X, Pt.Y, 7, 7)
+            Pt.X = MargenIzq + 78
+            e.Graphics.DrawImage(LogoEsteril, Pt.X, Pt.Y, 7, 7)
+            Pt.X = MargenIzq + 88
+            e.Graphics.DrawImage(LogoMD, Pt.X, Pt.Y, 7, 7)
+            Pt.X = MargenIzq + 98
+            e.Graphics.DrawImage(LogoCE, Pt.X, Pt.Y, 7, 7)
+
+            Fuente = New System.Drawing.Font("Arial", 9, FontStyle.Regular)
+            FuenteBold = New System.Drawing.Font("Arial", 9, FontStyle.Bold)
+
+            Pt.X = MargenIzq + 17
+            Pt.Y = MargenSup + 1
+            e.Graphics.DrawString("Nombre:", FuenteBold, Brushes.Black, Pt)
+            Pt.X = MargenIzq + 31
             e.Graphics.DrawString(dt2.Item("Description"), Fuente, Brushes.Black, Pt)
 
-            Pt.X = 3
-            Pt.Y = 11
-            e.Graphics.DrawString("Referencia:", Fuente, Brushes.Black, Pt)
 
-            Pt.X = 22
+            Pt.X = MargenIzq + 17
+            Pt.Y = MargenSup + 6
+            e.Graphics.DrawImage(LogoUDI, Pt.X, Pt.Y, 7, 7)
+            Pt.X = MargenIzq + 8
+            Pt.Y = MargenSup + 24
+            e.Graphics.DrawString(UdiStr, Fuente, Brushes.Black, Pt)
+
+
+            Pt.X = MargenIzq + 24
+            Pt.Y = MargenSup + 5
+            e.Graphics.DrawImage(UdiQR, Pt.X, Pt.Y, 19, 19)
+
+            Pt.X = MargenIzq + 44
+            Pt.Y = MargenSup + 8
+            e.Graphics.DrawString("UDS:", FuenteBold, Brushes.Black, Pt)
+            Pt.X = MargenIzq + 54
+            e.Graphics.DrawString(dt.Item("Unidades").ToString, Fuente, Brushes.Black, Pt)
+
+
+            Pt.X = MargenIzq + 110
+            Pt.Y = MargenSup + 6
+            e.Graphics.DrawImage(LogoREF, Pt.X, Pt.Y, 7, 7)
+
+
+            Pt.X = MargenIzq + 120
+            Pt.Y = MargenSup + 8
             e.Graphics.DrawString(dt2.Item("ItemNo"), Fuente, Brushes.Black, Pt)
 
-            Pt.X = 60
-            e.Graphics.DrawString("Caducidad:", Fuente, Brushes.Black, Pt)
+            Pt.X = MargenIzq + 110
+            Pt.Y = MargenSup + 14
+            e.Graphics.DrawImage(LogoLOT, Pt.X, Pt.Y, 7, 7)
 
-            e.Graphics.DrawRectangle(Raya, 85, 10, 62, 7)
 
-            Pt.Y = 11
-            Pt.X = 90 + Centrar_Texto(e, dt2.Item("ExpirationDate"), Fuente, 62)
-            e.Graphics.DrawString(dt2.Item("ExpirationDate"), Fuente, Brushes.Black, Pt)
-
-            Pt.Y = 18
-            Pt.X = 60
-            e.Graphics.DrawString("Lote:", Fuente, Brushes.Black, Pt)
-
-            e.Graphics.DrawRectangle(Raya, 85, 17, 62, 7)
-            Pt.Y = 18
-            Pt.X = 90 + (Centrar_Texto(e, dt2.Item("LotNo"), Fuente, 62))
+            Pt.X = MargenIzq + 120
+            Pt.Y = MargenSup + 16
             e.Graphics.DrawString(dt2.Item("LotNo"), Fuente, Brushes.Black, Pt)
+
+            Pt.X = MargenIzq + 110
+            Pt.Y = MargenSup + 22
+
+            e.Graphics.DrawImage(LogoCaducidad, Pt.X, Pt.Y, 7, 5)
+
+            Pt.X = MargenIzq + 120
+            Pt.Y = MargenSup + 23
+            e.Graphics.DrawString(dt2.Item("ExpirationDate"), Fuente, Brushes.Black, Pt)
 
             ' Cabecera Tabla
 
-            e.Graphics.DrawRectangle(Raya, 5, 24, 142, 7)
-            e.Graphics.FillRectangle(Brocha, 5, 24, 142, 7)
+            e.Graphics.DrawRectangle(Raya, MargenIzq, MargenSup + 28, 144, 5)
 
-            Fuente = New System.Drawing.Font("Arial", 10, FontStyle.Bold)
-            Pt.Y = 26
+            Fuente = New System.Drawing.Font("Arial", 9, FontStyle.Bold)
+            Pt.Y = MargenSup + 29
             Pt.X = 7 + Centrar_Texto(e, "PRODUCTOS SANITARIOS INCLUIDOS", Fuente, 142)
             e.Graphics.DrawString("PRODUCTOS SANITARIOS INCLUIDOS", Fuente, Brushes.Black, Pt)
 
-            e.Graphics.DrawRectangle(Raya, 5, 31, 17, 7)
-            e.Graphics.DrawRectangle(Raya, 22, 31, 42, 7)
-            e.Graphics.DrawRectangle(Raya, 64, 31, 30, 7)
-            e.Graphics.DrawRectangle(Raya, 94, 31, 35, 7)
-            e.Graphics.DrawRectangle(Raya, 129, 31, 18, 7)
+            e.Graphics.DrawRectangle(Raya, MargenIzq, MargenSup + 33, 17, 6)
+            'e.Graphics.FillRectangle(Brocha, MargenIzq, MargenSup + 30, 17, 6)
 
-            Fuente = New System.Drawing.Font("Arial", 7, FontStyle.Regular)
-            Pt.Y = 33
-            Pt.X = 5 + Centrar_Texto(e, "Referencia", Fuente, 16)
+            e.Graphics.DrawRectangle(Raya, MargenIzq + 17, MargenSup + 33, 40, 6)
+            'e.Graphics.FillRectangle(Brocha, MargenIzq + 17, MargenSup + 30, 40, 6)
+
+            e.Graphics.DrawRectangle(Raya, MargenIzq + 57, MargenSup + 33, 30, 6)
+            'e.Graphics.FillRectangle(Brocha, MargenIzq + 57, MargenSup + 30, 30, 6)
+
+            e.Graphics.DrawRectangle(Raya, MargenIzq + 87, MargenSup + 33, 35, 6)
+            'e.Graphics.FillRectangle(Brocha, MargenIzq + 87, MargenSup + 30, 35, 6)
+
+            e.Graphics.DrawRectangle(Raya, MargenIzq + 122, MargenSup + 33, 22, 6)
+            'e.Graphics.FillRectangle(Brocha, MargenIzq + 122, MargenSup + 30, 22, 6)
+
+            Fuente = New System.Drawing.Font("Arial", 9, FontStyle.Regular)
+            Pt.Y = MargenSup + 34
+            Pt.X = MargenIzq + Centrar_Texto(e, "Referencia", Fuente, 16)
             e.Graphics.DrawString("Referencia", Fuente, Brushes.Black, Pt)
-            Pt.X = 23 + Centrar_Texto(e, "Nombre del Producto", Fuente, 42)
+            Pt.X = MargenIzq + 17 + Centrar_Texto(e, "Nombre del Producto", Fuente, 42)
             e.Graphics.DrawString("Nombre del Producto", Fuente, Brushes.Black, Pt)
-            Pt.X = 64 + Centrar_Texto(e, "Fabricante", Fuente, 30)
+            Pt.X = MargenIzq + 57 + Centrar_Texto(e, "Fabricante", Fuente, 30)
             e.Graphics.DrawString("Fabricante", Fuente, Brushes.Black, Pt)
-            Pt.X = 94 + Centrar_Texto(e, "Dirección", Fuente, 35)
+            Pt.X = MargenIzq + 87 + Centrar_Texto(e, "Dirección", Fuente, 35)
             e.Graphics.DrawString("Dirección", Fuente, Brushes.Black, Pt)
-            Pt.X = 129 + Centrar_Texto(e, "Marcado UE", Fuente, 18)
+            Pt.X = MargenIzq + 122 + Centrar_Texto(e, "Marcado UE", Fuente, 18)
             e.Graphics.DrawString("Marcado UE", Fuente, Brushes.Black, Pt)
 
             ' Lineas
-            Dim Linea As Integer = 31
+            Dim Linea As Integer = MargenSup + 31
 
             For Each dt3 As DataRow In dt2.GetChildRows(ds.Tables(1).ChildRelations(0))
                 Kit_Linea(e, dt3, Linea)
             Next
 
-
             ' Pie
-            Pt.Y = Linea + 7
-            Pt.X = 6 + Centrar_Texto(e, "Agrupado por: CRIVEL, S.A. Calle Argualas s/n Polígono Industrial Argualas, nave 31 Zaragoza 50012", Fuente, 140)
-            e.Graphics.DrawRectangle(Raya, 5, Pt.Y, 142, 7)
+            Fuente = New System.Drawing.Font("Arial", 9, FontStyle.Regular)
+
+            Pt.Y = Linea + 8
+            Pt.X = 6 + Centrar_Texto(e, "Agrupado por: CRIVEL, S.A. Calle Argualas s/n Polígono Ind. Argualas, nave 31 Zaragoza 50012", Fuente, 140)
+            e.Graphics.DrawRectangle(Raya, MargenIzq, Pt.Y, 144, 6)
             Pt.Y += 2
-            e.Graphics.DrawString("Agrupado por: CRIVEL, S.A. Calle Argualas s/n Polígono Industrial Argualas, nave 31 Zaragoza 50012", Fuente, Brushes.Black, Pt)
+            e.Graphics.DrawString("Agrupado por: CRIVEL, S.A. Calle Argualas s/n Polígono Ind. Argualas, nave 31 Zaragoza 50012", Fuente, Brushes.Black, Pt)
 
 
             e.HasMorePages = False
         Next
 
     End Sub
+
+    Private Sub Kit_Linea(e As PrintPageEventArgs, dt As DataRow, ByRef Linea As Integer)
+        Dim Fuente As System.Drawing.Font
+        Dim Pt As New System.Drawing.Point
+        Dim Talla As New SizeF
+        Dim Raya As Pen = New Pen(Color.Black, 0.5)
+        Dim Texto() As String = Nothing
+
+        Linea += 8
+        e.Graphics.DrawRectangle(Raya, 3, Linea, 17, 8)
+        e.Graphics.DrawRectangle(Raya, 3 + 17, Linea, 40, 8)
+        e.Graphics.DrawRectangle(Raya, 3 + 57, Linea, 30, 8)
+        e.Graphics.DrawRectangle(Raya, 3 + 87, Linea, 35, 8)
+        e.Graphics.DrawRectangle(Raya, 3 + 122, Linea, 22, 8)
+
+        Fuente = New System.Drawing.Font("Arial", 7, FontStyle.Regular)
+        Pt.Y = Linea + 2
+        Pt.X = 4
+        e.Graphics.DrawString(dt.Item("Sub_ItemNo"), Fuente, Brushes.Black, Pt)
+        Fuente = New System.Drawing.Font("Arial", 7, FontStyle.Regular)
+
+        Trocear_Texto(e, dt.Item("Sub_Description"), Fuente, 40, Texto)
+        Pt.Y = Linea + 1
+        Pt.X = 21
+        e.Graphics.DrawString(Texto(0), Fuente, Brushes.Black, Pt)
+        If Texto.Length > 1 Then
+            Pt.Y = Pt.Y + 3
+            e.Graphics.DrawString(Texto(1), Fuente, Brushes.Black, Pt)
+        End If
+
+        Trocear_Texto(e, dt.Item("Sub_Fabricante"), Fuente, 30, Texto)
+        Pt.Y = Linea + 1
+        Pt.X = 62
+        e.Graphics.DrawString(Texto(0), Fuente, Brushes.Black, Pt)
+        If Texto.Length > 1 Then
+            Pt.Y = Pt.Y + 3
+            e.Graphics.DrawString(Texto(1), Fuente, Brushes.Black, Pt)
+        End If
+
+        Trocear_Texto(e, dt.Item("Sub_Fabricante_Dir"), Fuente, 35, Texto)
+        Pt.Y = Linea + 1
+        Pt.X = 92
+        e.Graphics.DrawString(Texto(0), Fuente, Brushes.Black, Pt)
+        If Texto.Length > 1 Then
+            Pt.Y = Pt.Y + 3
+            e.Graphics.DrawString(Texto(1), Fuente, Brushes.Black, Pt)
+        End If
+
+        Pt.Y = Linea + 1
+        Pt.X = 128
+        e.Graphics.DrawString(dt.Item("MarcadoCE"), Fuente, Brushes.Black, Pt)
+
+        e.HasMorePages = False
+    End Sub
+
+
+
+
+
+    Private Sub Kit_PrintPage_E(ByVal sender As System.Object, e As PrintPageEventArgs)
+        Dim Fuente As System.Drawing.Font
+        Dim FuenteMini As System.Drawing.Font
+        Dim FuenteBold As System.Drawing.Font
+        Dim Pt As New System.Drawing.Point
+        Dim Talla As New SizeF
+        Dim Raya As Pen = New Pen(Color.Black, 0.5)
+        Dim Brocha As Brush = New SolidBrush(Color.GreenYellow)
+        Dim Paginas As Integer = 1
+        Dim MargenIzq As Integer = 3.0
+        Dim MargenSup As Integer = 3
+        Dim UdiQR As System.Drawing.Bitmap
+        Dim LogoCrivelsa As System.Drawing.Bitmap
+        Dim LogoCE As System.Drawing.Bitmap
+        Dim Logo2 As System.Drawing.Bitmap
+        Dim LogoEmbalaje As System.Drawing.Bitmap
+        'Dim LogoEsteril As System.Drawing.Bitmap
+        Dim LogoMD As System.Drawing.Bitmap
+        Dim LogoAviso As System.Drawing.Bitmap
+        Dim LogoREF As System.Drawing.Bitmap
+        Dim LogoLOT As System.Drawing.Bitmap
+        Dim LogoUDI As System.Drawing.Bitmap
+        Dim LogoCaducidad As System.Drawing.Bitmap
+        Dim UdiStr As String = ""
+        Dim writer As New BarcodeWriter()
+        writer.Format = BarcodeFormat.DATA_MATRIX
+
+        ' Opciones de imagen
+        writer.Options = New ZXing.Common.EncodingOptions With {
+            .Height = 19,
+            .Width = 19,
+            .Margin = 1
+        }
+
+        LogoCrivelsa = System.Drawing.Image.FromFile("C:\Navision\Printer-Task\Imagen\Crivelsa.png")
+        LogoEmbalaje = System.Drawing.Image.FromFile("C:\Navision\Printer-Task\Imagen\Embalaje.png")
+        Logo2 = System.Drawing.Image.FromFile("C:\Navision\Printer-Task\Imagen\Logo2.png")
+        LogoAviso = System.Drawing.Image.FromFile("C:\Navision\Printer-Task\Imagen\Aviso.png")
+        'LogoEsteril = System.Drawing.Image.FromFile("C:\Navision\Printer-Task\Imagen\Esteril.png")
+        LogoMD = System.Drawing.Image.FromFile("C:\Navision\Printer-Task\Imagen\MD.png")
+        LogoCE = System.Drawing.Image.FromFile("C:\Navision\Printer-Task\Imagen\CE.png")
+        LogoCaducidad = System.Drawing.Image.FromFile("C:\Navision\Printer-Task\Imagen\FechaCaducidad.png")
+        LogoLOT = System.Drawing.Image.FromFile("C:\Navision\Printer-Task\Imagen\LOT.png")
+        LogoREF = System.Drawing.Image.FromFile("C:\Navision\Printer-Task\Imagen\REF.png")
+        LogoUDI = System.Drawing.Image.FromFile("C:\Navision\Printer-Task\Imagen\UDI.png")
+
+
+        For Each dt2 As DataRow In dt.GetChildRows(ds.Tables(0).ChildRelations(0))
+            e.Graphics.PageUnit = GraphicsUnit.Millimeter
+
+            ' Generar imagen
+
+            Dim FechaRegistro As Date
+            Date.TryParseExact(dt2.Item("PostingDate"), "dd/MM/yyyy", Globalization.CultureInfo.InvariantCulture, Globalization.DateTimeStyles.None, FechaRegistro)
+            Dim FechaCaducidad As Date
+            Date.TryParseExact(dt2.Item("ExpirationDate"), "dd/MM/yyyy", Globalization.CultureInfo.InvariantCulture, Globalization.DateTimeStyles.None, FechaCaducidad)
+
+            UdiStr = $"(01){dt2.Item("AECOC")}(17){FechaCaducidad.ToString("ddMMyy")}(11){FechaRegistro.ToString("ddMMyy")}(10){dt2.Item("LotNo")}"
+            UdiQR = writer.Write(UdiStr)
+
+            ' DATOS
+            '--------
+
+            e.Graphics.DrawRectangle(Raya, MargenIzq, MargenSup, 144, 28)
+
+            Pt.X = MargenIzq + 2
+            Pt.Y = MargenSup + 2
+            e.Graphics.DrawImage(LogoCrivelsa, Pt.X, Pt.Y, 15, 15)
+
+            Pt.X = MargenIzq + 78
+            Pt.Y = MargenSup + 6
+            e.Graphics.DrawImage(LogoEmbalaje, Pt.X, Pt.Y, 7, 7)
+            Pt.X = MargenIzq + 88
+            e.Graphics.DrawImage(Logo2, Pt.X, Pt.Y, 7, 7)
+            Pt.X = MargenIzq + 68
+            Pt.Y = MargenSup + 14
+            'e.Graphics.DrawImage(LogoAviso, Pt.X, Pt.Y, 7, 7)
+            Pt.X = MargenIzq + 78
+            e.Graphics.DrawImage(LogoAviso, Pt.X, Pt.Y, 7, 7)
+            Pt.X = MargenIzq + 88
+            e.Graphics.DrawImage(LogoMD, Pt.X, Pt.Y, 7, 7)
+            Pt.X = MargenIzq + 98
+            e.Graphics.DrawImage(LogoCE, Pt.X, Pt.Y, 7, 7)
+
+            Fuente = New System.Drawing.Font("Arial", 9, FontStyle.Regular)
+            FuenteBold = New System.Drawing.Font("Arial", 9, FontStyle.Bold)
+
+            Pt.X = MargenIzq + 17
+            Pt.Y = MargenSup + 1
+            e.Graphics.DrawString("Nombre:", FuenteBold, Brushes.Black, Pt)
+            Pt.X = MargenIzq + 31
+            e.Graphics.DrawString(dt2.Item("Description"), Fuente, Brushes.Black, Pt)
+
+
+            Pt.X = MargenIzq + 17
+            Pt.Y = MargenSup + 6
+            e.Graphics.DrawImage(LogoUDI, Pt.X, Pt.Y, 7, 7)
+            Pt.X = MargenIzq + 8
+            Pt.Y = MargenSup + 24
+            e.Graphics.DrawString(UdiStr, Fuente, Brushes.Black, Pt)
+
+
+            Pt.X = MargenIzq + 24
+            Pt.Y = MargenSup + 5
+            e.Graphics.DrawImage(UdiQR, Pt.X, Pt.Y, 19, 19)
+
+            Pt.X = MargenIzq + 44
+            Pt.Y = MargenSup + 8
+            e.Graphics.DrawString("UDS:", FuenteBold, Brushes.Black, Pt)
+            Pt.X = MargenIzq + 54
+            e.Graphics.DrawString(dt.Item("Unidades").ToString, Fuente, Brushes.Black, Pt)
+
+
+            Pt.X = MargenIzq + 110
+            Pt.Y = MargenSup + 6
+            e.Graphics.DrawImage(LogoREF, Pt.X, Pt.Y, 7, 7)
+
+
+            Pt.X = MargenIzq + 120
+            Pt.Y = MargenSup + 8
+            e.Graphics.DrawString(dt2.Item("ItemNo"), Fuente, Brushes.Black, Pt)
+
+            Pt.X = MargenIzq + 110
+            Pt.Y = MargenSup + 14
+            e.Graphics.DrawImage(LogoLOT, Pt.X, Pt.Y, 7, 7)
+
+
+            Pt.X = MargenIzq + 120
+            Pt.Y = MargenSup + 16
+            e.Graphics.DrawString(dt2.Item("LotNo"), Fuente, Brushes.Black, Pt)
+
+            Pt.X = MargenIzq + 110
+            Pt.Y = MargenSup + 22
+
+            e.Graphics.DrawImage(LogoCaducidad, Pt.X, Pt.Y, 7, 5)
+
+            Pt.X = MargenIzq + 120
+            Pt.Y = MargenSup + 23
+            e.Graphics.DrawString(dt2.Item("ExpirationDate"), Fuente, Brushes.Black, Pt)
+
+            ' Cabecera Tabla
+
+            e.Graphics.DrawRectangle(Raya, MargenIzq, MargenSup + 28, 144, 5)
+
+            Fuente = New System.Drawing.Font("Arial", 9, FontStyle.Bold)
+            Pt.Y = MargenSup + 29
+            Pt.X = 7 + Centrar_Texto(e, "PRODUCTOS SANITARIOS INCLUIDOS", Fuente, 142)
+            e.Graphics.DrawString("PRODUCTOS SANITARIOS INCLUIDOS", Fuente, Brushes.Black, Pt)
+
+            e.Graphics.DrawRectangle(Raya, MargenIzq, MargenSup + 33, 17, 6)
+            'e.Graphics.FillRectangle(Brocha, MargenIzq, MargenSup + 30, 17, 6)
+
+            e.Graphics.DrawRectangle(Raya, MargenIzq + 17, MargenSup + 33, 40, 6)
+            'e.Graphics.FillRectangle(Brocha, MargenIzq + 17, MargenSup + 30, 40, 6)
+
+            e.Graphics.DrawRectangle(Raya, MargenIzq + 57, MargenSup + 33, 30, 6)
+            'e.Graphics.FillRectangle(Brocha, MargenIzq + 57, MargenSup + 30, 30, 6)
+
+            e.Graphics.DrawRectangle(Raya, MargenIzq + 87, MargenSup + 33, 57, 6)
+            'e.Graphics.FillRectangle(Brocha, MargenIzq + 87, MargenSup + 30, 35, 6)
+
+            'e.Graphics.DrawRectangle(Raya, MargenIzq + 122, MargenSup + 33, 22, 6)
+            'e.Graphics.FillRectangle(Brocha, MargenIzq + 122, MargenSup + 30, 22, 6)
+
+            Fuente = New System.Drawing.Font("Arial", 9, FontStyle.Regular)
+            Pt.Y = MargenSup + 34
+            Pt.X = MargenIzq + Centrar_Texto(e, "Referencia", Fuente, 16)
+            e.Graphics.DrawString("Referencia", Fuente, Brushes.Black, Pt)
+            Pt.X = MargenIzq + 17 + Centrar_Texto(e, "Nombre del Producto", Fuente, 42)
+            e.Graphics.DrawString("Nombre del Producto", Fuente, Brushes.Black, Pt)
+            Pt.X = MargenIzq + 57 + Centrar_Texto(e, "Fabricante", Fuente, 30)
+            e.Graphics.DrawString("Fabricante", Fuente, Brushes.Black, Pt)
+            Pt.X = MargenIzq + 87 + Centrar_Texto(e, "Dirección", Fuente, 35)
+            e.Graphics.DrawString("Dirección", Fuente, Brushes.Black, Pt)
+            Pt.X = MargenIzq + 122 + Centrar_Texto(e, "Marcado UE", Fuente, 18)
+            'e.Graphics.DrawString("Marcado UE", Fuente, Brushes.Black, Pt)
+
+            ' Lineas
+            Dim Linea As Integer = MargenSup + 31
+
+            For Each dt3 As DataRow In dt2.GetChildRows(ds.Tables(1).ChildRelations(0))
+                Kit_Linea_E(e, dt3, Linea)
+            Next
+
+            ' Pie
+            Fuente = New System.Drawing.Font("Arial", 9, FontStyle.Regular)
+
+            Pt.Y = Linea + 8
+            Pt.X = 6 + Centrar_Texto(e, "Agrupado por: CRIVEL, S.A. Calle Argualas s/n Polígono Ind. Argualas, nave 31 Zaragoza 50012", Fuente, 140)
+            e.Graphics.DrawRectangle(Raya, MargenIzq, Pt.Y, 144, 6)
+            Pt.Y += 2
+            e.Graphics.DrawString("Agrupado por: CRIVEL, S.A. Calle Argualas s/n Polígono Ind. Argualas, nave 31 Zaragoza 50012", Fuente, Brushes.Black, Pt)
+
+
+            e.HasMorePages = False
+        Next
+
+    End Sub
+
+    Private Sub Kit_Linea_E(e As PrintPageEventArgs, dt As DataRow, ByRef Linea As Integer)
+        Dim Fuente As System.Drawing.Font
+        Dim Pt As New System.Drawing.Point
+        Dim Talla As New SizeF
+        Dim Raya As Pen = New Pen(Color.Black, 0.5)
+        Dim Texto() As String = Nothing
+
+        Linea += 8
+
+        e.Graphics.DrawRectangle(Raya, 3, Linea, 17, 8)
+        e.Graphics.DrawRectangle(Raya, 3 + 17, Linea, 40, 8)
+        e.Graphics.DrawRectangle(Raya, 3 + 57, Linea, 30, 8)
+        e.Graphics.DrawRectangle(Raya, 3 + 87, Linea, 57, 8)
+        'e.Graphics.DrawRectangle(Raya, 3 + 122, Linea, 22, 8)
+
+        Fuente = New System.Drawing.Font("Arial", 7, FontStyle.Regular)
+        Pt.Y = Linea + 2
+        Pt.X = 4
+        e.Graphics.DrawString(dt.Item("Sub_ItemNo"), Fuente, Brushes.Black, Pt)
+        Fuente = New System.Drawing.Font("Arial", 7, FontStyle.Regular)
+
+        Trocear_Texto(e, dt.Item("Sub_Description"), Fuente, 40, Texto)
+        Pt.Y = Linea + 1
+        Pt.X = 21
+        e.Graphics.DrawString(Texto(0), Fuente, Brushes.Black, Pt)
+        If Texto.Length > 1 Then
+            Pt.Y = Pt.Y + 3
+            e.Graphics.DrawString(Texto(1), Fuente, Brushes.Black, Pt)
+        End If
+
+        Trocear_Texto(e, dt.Item("Sub_Fabricante"), Fuente, 30, Texto)
+        Pt.Y = Linea + 1
+        Pt.X = 62
+        e.Graphics.DrawString(Texto(0), Fuente, Brushes.Black, Pt)
+        If Texto.Length > 1 Then
+            Pt.Y = Pt.Y + 3
+            e.Graphics.DrawString(Texto(1), Fuente, Brushes.Black, Pt)
+        End If
+
+        Trocear_Texto(e, dt.Item("Sub_Fabricante_Dir"), Fuente, 35, Texto)
+        Pt.Y = Linea + 1
+        Pt.X = 92
+        e.Graphics.DrawString(Texto(0), Fuente, Brushes.Black, Pt)
+        If Texto.Length > 1 Then
+            Pt.Y = Pt.Y + 3
+            e.Graphics.DrawString(Texto(1), Fuente, Brushes.Black, Pt)
+        End If
+
+        Pt.Y = Linea + 1
+        Pt.X = 128
+        'e.Graphics.DrawString(dt.Item("MarcadoCE"), Fuente, Brushes.Black, Pt)
+
+        e.HasMorePages = False
+    End Sub
+
+
+
+
 
 
     Private Sub Kit_Gs1_PrintPage(ByVal sender As System.Object, e As PrintPageEventArgs)
@@ -289,63 +717,6 @@ Class Impresora
         Next
 
     End Sub
-
-    Private Sub Kit_Linea(e As PrintPageEventArgs, dt As DataRow, ByRef Linea As Integer)
-        Dim Fuente As System.Drawing.Font
-        Dim Pt As New System.Drawing.Point
-        Dim Talla As New SizeF
-        Dim Raya As Pen = New Pen(Color.Black, 0.5)
-        Dim Texto() As String = Nothing
-
-        Linea += 7
-        e.Graphics.DrawRectangle(Raya, 5, Linea, 17, 7)
-        e.Graphics.DrawRectangle(Raya, 22, Linea, 42, 7)
-        e.Graphics.DrawRectangle(Raya, 64, Linea, 30, 7)
-        e.Graphics.DrawRectangle(Raya, 94, Linea, 35, 7)
-        e.Graphics.DrawRectangle(Raya, 129, Linea, 18, 7)
-
-        Fuente = New System.Drawing.Font("Arial", 7, FontStyle.Regular)
-        Pt.Y = Linea + 2
-        Pt.X = 6
-        e.Graphics.DrawString(dt.Item("Sub_ItemNo"), Fuente, Brushes.Black, Pt)
-        Fuente = New System.Drawing.Font("Arial", 7, FontStyle.Regular)
-
-        Trocear_Texto(e, dt.Item("Sub_Description"), Fuente, 40, Texto)
-        Pt.Y = Linea + 1
-        Pt.X = 23
-        e.Graphics.DrawString(Texto(0), Fuente, Brushes.Black, Pt)
-        If Texto.Length > 1 Then
-            Pt.Y = Pt.Y + 3
-            e.Graphics.DrawString(Texto(1), Fuente, Brushes.Black, Pt)
-        End If
-
-        Trocear_Texto(e, dt.Item("Sub_Fabricante"), Fuente, 30, Texto)
-        Pt.Y = Linea + 1
-        Pt.X = 65
-        e.Graphics.DrawString(Texto(0), Fuente, Brushes.Black, Pt)
-        If Texto.Length > 1 Then
-            Pt.Y = Pt.Y + 3
-            e.Graphics.DrawString(Texto(1), Fuente, Brushes.Black, Pt)
-        End If
-
-        Trocear_Texto(e, dt.Item("Sub_Fabricante_Dir"), Fuente, 35, Texto)
-        Pt.Y = Linea + 1
-        Pt.X = 95
-        e.Graphics.DrawString(Texto(0), Fuente, Brushes.Black, Pt)
-        If Texto.Length > 1 Then
-            Pt.Y = Pt.Y + 3
-            e.Graphics.DrawString(Texto(1), Fuente, Brushes.Black, Pt)
-        End If
-
-        Pt.Y = Linea + 1
-        Pt.X = 130
-        e.Graphics.DrawString("Sí", Fuente, Brushes.Black, Pt)
-        Pt.Y = Pt.Y + 3
-        e.Graphics.DrawString("Automarcado", Fuente, Brushes.Black, Pt)
-
-        e.HasMorePages = False
-    End Sub
-
 
     Private Sub Clientes_PrintPage(ByVal sender As System.Object, e As PrintPageEventArgs)
         Dim Fuente As System.Drawing.Font
@@ -632,5 +1003,190 @@ Class Impresora
     End Function
 #End Region
 
+
+    Private Sub Kit_PrintPage_OLD(ByVal sender As System.Object, e As PrintPageEventArgs)
+        Dim Fuente As System.Drawing.Font
+        Dim FuenteMini As System.Drawing.Font
+        Dim FuenteBold As System.Drawing.Font
+        Dim Pt As New System.Drawing.Point
+        Dim Talla As New SizeF
+        Dim Raya As Pen = New Pen(Color.Black, 0.5)
+        Dim Brocha As Brush = New SolidBrush(Color.GreenYellow)
+        Dim Paginas As Integer = 1
+        Dim MargenIzq As Integer = 3.0
+        Dim MargenSup As Integer = 3
+        Dim Logo(7) As System.Drawing.Bitmap
+        Dim UdiQR As System.Drawing.Bitmap
+        Dim UdiStr As String = ""
+        Dim writer As New BarcodeWriter()
+        writer.Format = BarcodeFormat.DATA_MATRIX
+
+        ' Opciones de imagen
+        writer.Options = New ZXing.Common.EncodingOptions With {
+            .Height = 13,
+            .Width = 13,
+            .Margin = 1
+        }
+
+        Logo(0) = System.Drawing.Image.FromFile("C:\Navision\Printer-Task\Imagen\LogoCrivelsa.png")
+        Logo(1) = System.Drawing.Image.FromFile("C:\Navision\Printer-Task\Imagen\Logo1.png")
+        Logo(2) = System.Drawing.Image.FromFile("C:\Navision\Printer-Task\Imagen\Logo2.png")
+        Logo(3) = System.Drawing.Image.FromFile("C:\Navision\Printer-Task\Imagen\Logo3.png")
+        Logo(4) = System.Drawing.Image.FromFile("C:\Navision\Printer-Task\Imagen\Logo4.png")
+        Logo(5) = System.Drawing.Image.FromFile("C:\Navision\Printer-Task\Imagen\Logo5.png")
+        Logo(6) = System.Drawing.Image.FromFile("C:\Navision\Printer-Task\Imagen\LogoCE.png")
+        Logo(7) = System.Drawing.Image.FromFile("C:\Navision\Printer-Task\Imagen\LogoCaducidad.png")
+
+
+        For Each dt2 As DataRow In dt.GetChildRows(ds.Tables(0).ChildRelations(0))
+            e.Graphics.PageUnit = GraphicsUnit.Millimeter
+
+            ' Generar imagen
+
+            Dim FechaRegistro As Date
+            Date.TryParseExact(dt2.Item("PostingDate"), "dd/MM/yyyy", Globalization.CultureInfo.InvariantCulture, Globalization.DateTimeStyles.None, FechaRegistro)
+            Dim FechaCaducidad As Date
+            Date.TryParseExact(dt2.Item("ExpirationDate"), "dd/MM/yyyy", Globalization.CultureInfo.InvariantCulture, Globalization.DateTimeStyles.None, FechaCaducidad)
+
+            UdiStr = $"(01){dt2.Item("AECOC")}(17){FechaCaducidad.ToString("ddMMyy")}(11){FechaRegistro.ToString("ddMMyy")}(10){dt2.Item("LotNo")}"
+            UdiQR = writer.Write(UdiStr)
+
+            ' DATOS
+            '--------
+
+            e.Graphics.DrawRectangle(Raya, MargenIzq, MargenSup, 144, 20)
+
+            Pt.X = MargenIzq + 2
+            Pt.Y = MargenSup + 2
+            e.Graphics.DrawImage(Logo(0), Pt.X, Pt.Y, 12, 12)
+
+            Pt.X = MargenIzq + 75
+            Pt.Y = MargenSup + 4
+            e.Graphics.DrawImage(Logo(1), Pt.X, Pt.Y, 7, 7)
+            Pt.X = MargenIzq + 85
+            e.Graphics.DrawImage(Logo(2), Pt.X, Pt.Y, 7, 7)
+            Pt.X = MargenIzq + 65
+            Pt.Y = MargenSup + 11
+            e.Graphics.DrawImage(Logo(3), Pt.X, Pt.Y, 7, 7)
+            Pt.X = MargenIzq + 75
+            e.Graphics.DrawImage(Logo(4), Pt.X, Pt.Y, 7, 7)
+            Pt.X = MargenIzq + 85
+            e.Graphics.DrawImage(Logo(5), Pt.X, Pt.Y, 7, 7)
+            Pt.X = MargenIzq + 95
+            e.Graphics.DrawImage(Logo(6), Pt.X, Pt.Y, 7, 7)
+
+            Fuente = New System.Drawing.Font("Arial", 9, FontStyle.Regular)
+            FuenteMini = New System.Drawing.Font("Arial", 5, FontStyle.Regular)
+            FuenteBold = New System.Drawing.Font("Arial", 9, FontStyle.Bold)
+
+            Pt.X = MargenIzq + 15
+            Pt.Y = MargenSup + 1
+            e.Graphics.DrawString("Nombre:", FuenteBold, Brushes.Black, Pt)
+            Pt.X = MargenIzq + 30
+            e.Graphics.DrawString(dt2.Item("Description"), Fuente, Brushes.Black, Pt)
+
+
+            Pt.X = MargenIzq + 15
+            Pt.Y = MargenSup + 6
+            e.Graphics.DrawString("UDI:", FuenteBold, Brushes.Black, Pt)
+            Pt.X = MargenIzq + 8
+            Pt.Y = MargenSup + 17
+            e.Graphics.DrawString(UdiStr, FuenteMini, Brushes.Black, Pt)
+
+
+            Pt.X = MargenIzq + 22
+            Pt.Y = MargenSup + 5
+            e.Graphics.DrawImage(UdiQR, Pt.X, Pt.Y, 13, 13)
+
+            Pt.X = MargenIzq + 42
+            Pt.Y = MargenSup + 6
+            e.Graphics.DrawString("UDS:", FuenteBold, Brushes.Black, Pt)
+            Pt.X = MargenIzq + 50
+            e.Graphics.DrawString(dt2.Item("Quantity").ToString, Fuente, Brushes.Black, Pt)
+
+
+            Pt.X = MargenIzq + 110
+            Pt.Y = MargenSup + 6
+            e.Graphics.DrawString("REF", FuenteBold, Brushes.Black, Pt)
+
+            Pt.X = MargenIzq + 120
+            Pt.Y = MargenSup + 6
+            e.Graphics.DrawString(dt2.Item("ItemNo"), Fuente, Brushes.Black, Pt)
+
+            Pt.X = MargenIzq + 110
+            Pt.Y = MargenSup + 11
+            e.Graphics.DrawString("LOT", FuenteBold, Brushes.Black, Pt)
+
+            Pt.X = MargenIzq + 120
+            Pt.Y = MargenSup + 11
+            e.Graphics.DrawString(dt2.Item("LotNo"), Fuente, Brushes.Black, Pt)
+
+            Pt.X = MargenIzq + 112
+            Pt.Y = MargenSup + 15
+
+            e.Graphics.DrawImage(Logo(7), Pt.X, Pt.Y, 5, 5)
+
+            Pt.X = MargenIzq + 120
+            Pt.Y = MargenSup + 16
+            e.Graphics.DrawString(dt2.Item("ExpirationDate"), Fuente, Brushes.Black, Pt)
+
+            ' Cabecera Tabla
+
+            e.Graphics.DrawRectangle(Raya, MargenIzq, MargenSup + 20, 144, 5)
+
+            Fuente = New System.Drawing.Font("Arial", 9, FontStyle.Bold)
+            Pt.Y = MargenSup + 21
+            Pt.X = 7 + Centrar_Texto(e, "PRODUCTOS SANITARIOS INCLUIDOS", Fuente, 142)
+            e.Graphics.DrawString("PRODUCTOS SANITARIOS INCLUIDOS", Fuente, Brushes.Black, Pt)
+
+            e.Graphics.DrawRectangle(Raya, MargenIzq, MargenSup + 25, 17, 6)
+            e.Graphics.FillRectangle(Brocha, MargenIzq, MargenSup + 25, 17, 6)
+
+            e.Graphics.DrawRectangle(Raya, MargenIzq + 17, MargenSup + 25, 40, 6)
+            e.Graphics.FillRectangle(Brocha, MargenIzq + 17, MargenSup + 25, 40, 6)
+
+            e.Graphics.DrawRectangle(Raya, MargenIzq + 57, MargenSup + 25, 30, 6)
+            e.Graphics.FillRectangle(Brocha, MargenIzq + 57, MargenSup + 25, 30, 6)
+
+            e.Graphics.DrawRectangle(Raya, MargenIzq + 87, MargenSup + 25, 35, 6)
+            e.Graphics.FillRectangle(Brocha, MargenIzq + 87, MargenSup + 25, 35, 6)
+
+            e.Graphics.DrawRectangle(Raya, MargenIzq + 122, MargenSup + 25, 22, 6)
+            e.Graphics.FillRectangle(Brocha, MargenIzq + 122, MargenSup + 25, 22, 6)
+
+            Fuente = New System.Drawing.Font("Arial", 7, FontStyle.Regular)
+            Pt.Y = MargenSup + 26
+            Pt.X = MargenIzq + Centrar_Texto(e, "Referencia", Fuente, 16)
+            e.Graphics.DrawString("Referencia", Fuente, Brushes.Black, Pt)
+            Pt.X = MargenIzq + 17 + Centrar_Texto(e, "Nombre del Producto", Fuente, 42)
+            e.Graphics.DrawString("Nombre del Producto", Fuente, Brushes.Black, Pt)
+            Pt.X = MargenIzq + 57 + Centrar_Texto(e, "Fabricante", Fuente, 30)
+            e.Graphics.DrawString("Fabricante", Fuente, Brushes.Black, Pt)
+            Pt.X = MargenIzq + 87 + Centrar_Texto(e, "Dirección", Fuente, 35)
+            e.Graphics.DrawString("Dirección", Fuente, Brushes.Black, Pt)
+            Pt.X = MargenIzq + 122 + Centrar_Texto(e, "Marcado UE", Fuente, 18)
+            e.Graphics.DrawString("Marcado UE", Fuente, Brushes.Black, Pt)
+
+            ' Lineas
+            Dim Linea As Integer = MargenSup + 25
+
+            For Each dt3 As DataRow In dt2.GetChildRows(ds.Tables(1).ChildRelations(0))
+                Kit_Linea(e, dt3, Linea)
+            Next
+
+            ' Pie
+            Fuente = New System.Drawing.Font("Arial", 6, FontStyle.Regular)
+
+            Pt.Y = Linea + 6
+            Pt.X = 6 + Centrar_Texto(e, "Agrupado por: CRIVEL, S.A. Calle Argualas s/n Polígono Industrial Argualas, nave 31 Zaragoza 50012", Fuente, 140)
+            e.Graphics.DrawRectangle(Raya, MargenIzq, Pt.Y, 144, 6)
+            Pt.Y += 2
+            e.Graphics.DrawString("Agrupado por: CRIVEL, S.A. Calle Argualas s/n Polígono Industrial Argualas, nave 31 Zaragoza 50012", Fuente, Brushes.Black, Pt)
+
+
+            e.HasMorePages = False
+        Next
+
+    End Sub
 
 End Class

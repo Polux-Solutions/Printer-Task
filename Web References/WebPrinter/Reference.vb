@@ -45,6 +45,8 @@ Namespace WebPrinter
         
         Private Impresion_EnvioOperationCompleted As System.Threading.SendOrPostCallback
         
+        Private Impresion_Etiqueta_Kit_EspecialOperationCompleted As System.Threading.SendOrPostCallback
+        
         Private Impresion_Etiqueta_KitOperationCompleted As System.Threading.SendOrPostCallback
         
         Private Impresion_Etiquetas_EnvioOperationCompleted As System.Threading.SendOrPostCallback
@@ -119,6 +121,9 @@ Namespace WebPrinter
         
         '''<remarks/>
         Public Event Impresion_EnvioCompleted As Impresion_EnvioCompletedEventHandler
+        
+        '''<remarks/>
+        Public Event Impresion_Etiqueta_Kit_EspecialCompleted As Impresion_Etiqueta_Kit_EspecialCompletedEventHandler
         
         '''<remarks/>
         Public Event Impresion_Etiqueta_KitCompleted As Impresion_Etiqueta_KitCompletedEventHandler
@@ -332,22 +337,49 @@ Namespace WebPrinter
         End Sub
         
         '''<remarks/>
+        <System.Web.Services.Protocols.SoapDocumentMethodAttribute("urn:microsoft-dynamics-schemas/codeunit/PrinterDocument:Impresion_Etiqueta_Kit_Es"& _ 
+            "pecial", RequestNamespace:="urn:microsoft-dynamics-schemas/codeunit/PrinterDocument", ResponseElementName:="Impresion_Etiqueta_Kit_Especial_Result", ResponseNamespace:="urn:microsoft-dynamics-schemas/codeunit/PrinterDocument", Use:=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle:=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)>  _
+        Public Sub Impresion_Etiqueta_Kit_Especial(ByVal assNo As String, ByVal copias As Integer, ByVal unidades As Integer)
+            Me.Invoke("Impresion_Etiqueta_Kit_Especial", New Object() {assNo, copias, unidades})
+        End Sub
+        
+        '''<remarks/>
+        Public Overloads Sub Impresion_Etiqueta_Kit_EspecialAsync(ByVal assNo As String, ByVal copias As Integer, ByVal unidades As Integer)
+            Me.Impresion_Etiqueta_Kit_EspecialAsync(assNo, copias, unidades, Nothing)
+        End Sub
+        
+        '''<remarks/>
+        Public Overloads Sub Impresion_Etiqueta_Kit_EspecialAsync(ByVal assNo As String, ByVal copias As Integer, ByVal unidades As Integer, ByVal userState As Object)
+            If (Me.Impresion_Etiqueta_Kit_EspecialOperationCompleted Is Nothing) Then
+                Me.Impresion_Etiqueta_Kit_EspecialOperationCompleted = AddressOf Me.OnImpresion_Etiqueta_Kit_EspecialOperationCompleted
+            End If
+            Me.InvokeAsync("Impresion_Etiqueta_Kit_Especial", New Object() {assNo, copias, unidades}, Me.Impresion_Etiqueta_Kit_EspecialOperationCompleted, userState)
+        End Sub
+        
+        Private Sub OnImpresion_Etiqueta_Kit_EspecialOperationCompleted(ByVal arg As Object)
+            If (Not (Me.Impresion_Etiqueta_Kit_EspecialCompletedEvent) Is Nothing) Then
+                Dim invokeArgs As System.Web.Services.Protocols.InvokeCompletedEventArgs = CType(arg,System.Web.Services.Protocols.InvokeCompletedEventArgs)
+                RaiseEvent Impresion_Etiqueta_Kit_EspecialCompleted(Me, New System.ComponentModel.AsyncCompletedEventArgs(invokeArgs.Error, invokeArgs.Cancelled, invokeArgs.UserState))
+            End If
+        End Sub
+        
+        '''<remarks/>
         <System.Web.Services.Protocols.SoapDocumentMethodAttribute("urn:microsoft-dynamics-schemas/codeunit/PrinterDocument:Impresion_Etiqueta_Kit", RequestNamespace:="urn:microsoft-dynamics-schemas/codeunit/PrinterDocument", ResponseElementName:="Impresion_Etiqueta_Kit_Result", ResponseNamespace:="urn:microsoft-dynamics-schemas/codeunit/PrinterDocument", Use:=System.Web.Services.Description.SoapBindingUse.Literal, ParameterStyle:=System.Web.Services.Protocols.SoapParameterStyle.Wrapped)>  _
-        Public Sub Impresion_Etiqueta_Kit(ByVal assNo As String, ByVal copias As Integer)
-            Me.Invoke("Impresion_Etiqueta_Kit", New Object() {assNo, copias})
+        Public Sub Impresion_Etiqueta_Kit(ByVal assNo As String, ByVal copias As Integer, ByVal unidades As Integer)
+            Me.Invoke("Impresion_Etiqueta_Kit", New Object() {assNo, copias, unidades})
         End Sub
         
         '''<remarks/>
-        Public Overloads Sub Impresion_Etiqueta_KitAsync(ByVal assNo As String, ByVal copias As Integer)
-            Me.Impresion_Etiqueta_KitAsync(assNo, copias, Nothing)
+        Public Overloads Sub Impresion_Etiqueta_KitAsync(ByVal assNo As String, ByVal copias As Integer, ByVal unidades As Integer)
+            Me.Impresion_Etiqueta_KitAsync(assNo, copias, unidades, Nothing)
         End Sub
         
         '''<remarks/>
-        Public Overloads Sub Impresion_Etiqueta_KitAsync(ByVal assNo As String, ByVal copias As Integer, ByVal userState As Object)
+        Public Overloads Sub Impresion_Etiqueta_KitAsync(ByVal assNo As String, ByVal copias As Integer, ByVal unidades As Integer, ByVal userState As Object)
             If (Me.Impresion_Etiqueta_KitOperationCompleted Is Nothing) Then
                 Me.Impresion_Etiqueta_KitOperationCompleted = AddressOf Me.OnImpresion_Etiqueta_KitOperationCompleted
             End If
-            Me.InvokeAsync("Impresion_Etiqueta_Kit", New Object() {assNo, copias}, Me.Impresion_Etiqueta_KitOperationCompleted, userState)
+            Me.InvokeAsync("Impresion_Etiqueta_Kit", New Object() {assNo, copias, unidades}, Me.Impresion_Etiqueta_KitOperationCompleted, userState)
         End Sub
         
         Private Sub OnImpresion_Etiqueta_KitOperationCompleted(ByVal arg As Object)
@@ -704,6 +736,10 @@ Namespace WebPrinter
     '''<remarks/>
     <System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")>  _
     Public Delegate Sub Impresion_EnvioCompletedEventHandler(ByVal sender As Object, ByVal e As System.ComponentModel.AsyncCompletedEventArgs)
+    
+    '''<remarks/>
+    <System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")>  _
+    Public Delegate Sub Impresion_Etiqueta_Kit_EspecialCompletedEventHandler(ByVal sender As Object, ByVal e As System.ComponentModel.AsyncCompletedEventArgs)
     
     '''<remarks/>
     <System.CodeDom.Compiler.GeneratedCodeAttribute("System.Web.Services", "4.8.9032.0")>  _

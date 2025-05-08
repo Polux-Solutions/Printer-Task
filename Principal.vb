@@ -32,6 +32,8 @@ Module Principal
     Private Sub bucle_Infinito()
         Log(True, "Inicio Proceso")
         Proceso()
+        'Exit Sub
+
         Do While True
             Threading.Thread.Sleep(Datos.Delay)
             Proceso()
@@ -40,7 +42,7 @@ Module Principal
     Public Sub Proceso()
         Dim xml As String = ""
 
-        For n = 1 To 5
+        For n = 1 To 4
             Threading.Thread.Sleep(Datos.Delay)
             xml = ""
 
@@ -248,7 +250,7 @@ Module Principal
                 Printer.ds = ds
                 Printer.Imprimir_etiquetas()
             End If
-
+            ' REVISAR
             Web.Resolver(dt.Item("Id"), TextoError)
         Next
     End Sub

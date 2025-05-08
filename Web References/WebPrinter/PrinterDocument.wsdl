@@ -88,11 +88,26 @@
           <sequence />
         </complexType>
       </element>
+      <element name="Impresion_Etiqueta_Kit_Especial">
+        <complexType>
+          <sequence>
+            <element minOccurs="1" maxOccurs="1" name="assNo" type="string" />
+            <element minOccurs="1" maxOccurs="1" name="copias" type="int" />
+            <element minOccurs="1" maxOccurs="1" name="unidades" type="int" />
+          </sequence>
+        </complexType>
+      </element>
+      <element name="Impresion_Etiqueta_Kit_Especial_Result">
+        <complexType>
+          <sequence />
+        </complexType>
+      </element>
       <element name="Impresion_Etiqueta_Kit">
         <complexType>
           <sequence>
             <element minOccurs="1" maxOccurs="1" name="assNo" type="string" />
             <element minOccurs="1" maxOccurs="1" name="copias" type="int" />
+            <element minOccurs="1" maxOccurs="1" name="unidades" type="int" />
           </sequence>
         </complexType>
       </element>
@@ -239,6 +254,12 @@
   <message name="Impresion_Envio_Result">
     <part name="parameters" element="tns:Impresion_Envio_Result" />
   </message>
+  <message name="Impresion_Etiqueta_Kit_Especial">
+    <part name="parameters" element="tns:Impresion_Etiqueta_Kit_Especial" />
+  </message>
+  <message name="Impresion_Etiqueta_Kit_Especial_Result">
+    <part name="parameters" element="tns:Impresion_Etiqueta_Kit_Especial_Result" />
+  </message>
   <message name="Impresion_Etiqueta_Kit">
     <part name="parameters" element="tns:Impresion_Etiqueta_Kit" />
   </message>
@@ -315,6 +336,10 @@
     <operation name="Impresion_Envio">
       <input name="Impresion_Envio" message="tns:Impresion_Envio" />
       <output name="Impresion_Envio_Result" message="tns:Impresion_Envio_Result" />
+    </operation>
+    <operation name="Impresion_Etiqueta_Kit_Especial">
+      <input name="Impresion_Etiqueta_Kit_Especial" message="tns:Impresion_Etiqueta_Kit_Especial" />
+      <output name="Impresion_Etiqueta_Kit_Especial_Result" message="tns:Impresion_Etiqueta_Kit_Especial_Result" />
     </operation>
     <operation name="Impresion_Etiqueta_Kit">
       <input name="Impresion_Etiqueta_Kit" message="tns:Impresion_Etiqueta_Kit" />
@@ -411,6 +436,15 @@
         <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
       </input>
       <output name="Impresion_Envio_Result">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </output>
+    </operation>
+    <operation name="Impresion_Etiqueta_Kit_Especial">
+      <operation soapAction="urn:microsoft-dynamics-schemas/codeunit/PrinterDocument:Impresion_Etiqueta_Kit_Especial" style="document" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      <input name="Impresion_Etiqueta_Kit_Especial">
+        <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
+      </input>
+      <output name="Impresion_Etiqueta_Kit_Especial_Result">
         <body use="literal" xmlns="http://schemas.xmlsoap.org/wsdl/soap/" />
       </output>
     </operation>
