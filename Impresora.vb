@@ -331,9 +331,6 @@ Class Impresora
     End Sub
 
 
-
-
-
     Private Sub Kit_PrintPage_E(ByVal sender As System.Object, e As PrintPageEventArgs)
         Dim Fuente As System.Drawing.Font
         Dim FuenteMini As System.Drawing.Font
@@ -347,7 +344,7 @@ Class Impresora
         Dim MargenSup As Integer = 3
         Dim UdiQR As System.Drawing.Bitmap
         Dim LogoCrivelsa As System.Drawing.Bitmap
-        Dim LogoCE As System.Drawing.Bitmap
+        'Dim LogoCE As System.Drawing.Bitmap
         Dim Logo2 As System.Drawing.Bitmap
         Dim LogoEmbalaje As System.Drawing.Bitmap
         'Dim LogoEsteril As System.Drawing.Bitmap
@@ -374,7 +371,7 @@ Class Impresora
         LogoAviso = System.Drawing.Image.FromFile("C:\Navision\Printer-Task\Imagen\Aviso.png")
         'LogoEsteril = System.Drawing.Image.FromFile("C:\Navision\Printer-Task\Imagen\Esteril.png")
         LogoMD = System.Drawing.Image.FromFile("C:\Navision\Printer-Task\Imagen\MD.png")
-        LogoCE = System.Drawing.Image.FromFile("C:\Navision\Printer-Task\Imagen\CE.png")
+        'LogoCE = System.Drawing.Image.FromFile("C:\Navision\Printer-Task\Imagen\CE.png")
         LogoCaducidad = System.Drawing.Image.FromFile("C:\Navision\Printer-Task\Imagen\FechaCaducidad.png")
         LogoLOT = System.Drawing.Image.FromFile("C:\Navision\Printer-Task\Imagen\LOT.png")
         LogoREF = System.Drawing.Image.FromFile("C:\Navision\Printer-Task\Imagen\REF.png")
@@ -416,7 +413,7 @@ Class Impresora
             Pt.X = MargenIzq + 88
             e.Graphics.DrawImage(LogoMD, Pt.X, Pt.Y, 7, 7)
             Pt.X = MargenIzq + 98
-            e.Graphics.DrawImage(LogoCE, Pt.X, Pt.Y, 7, 7)
+            'e.Graphics.DrawImage(LogoCE, Pt.X, Pt.Y, 7, 7)
 
             Fuente = New System.Drawing.Font("Arial", 9, FontStyle.Regular)
             FuenteBold = New System.Drawing.Font("Arial", 9, FontStyle.Bold)
