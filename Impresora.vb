@@ -486,10 +486,15 @@ Class Impresora
             e.Graphics.DrawRectangle(Raya, MargenIzq + 17, MargenSup + 33, 40, 6)
             'e.Graphics.FillRectangle(Brocha, MargenIzq + 17, MargenSup + 30, 40, 6)
 
-            e.Graphics.DrawRectangle(Raya, MargenIzq + 57, MargenSup + 33, 30, 6)
+            'e.Graphics.DrawRectangle(Raya, MargenIzq + 57, MargenSup + 33, 30, 6) 'AVA 20250512
+            e.Graphics.DrawRectangle(Raya, MargenIzq + 57, MargenSup + 33, 45, 6) 'AVA 20250512
+
             'e.Graphics.FillRectangle(Brocha, MargenIzq + 57, MargenSup + 30, 30, 6)
 
-            e.Graphics.DrawRectangle(Raya, MargenIzq + 87, MargenSup + 33, 57, 6)
+
+            'e.Graphics.DrawRectangle(Raya, MargenIzq + 87, MargenSup + 33, 57, 6) 'AVA 20250512
+            e.Graphics.DrawRectangle(Raya, MargenIzq + 102, MargenSup + 33, 42, 6) 'AVA 20250512
+
             'e.Graphics.FillRectangle(Brocha, MargenIzq + 87, MargenSup + 30, 35, 6)
 
             'e.Graphics.DrawRectangle(Raya, MargenIzq + 122, MargenSup + 33, 22, 6)
@@ -503,7 +508,9 @@ Class Impresora
             e.Graphics.DrawString("Nombre del Producto", Fuente, Brushes.Black, Pt)
             Pt.X = MargenIzq + 57 + Centrar_Texto(e, "Fabricante", Fuente, 30)
             e.Graphics.DrawString("Fabricante", Fuente, Brushes.Black, Pt)
-            Pt.X = MargenIzq + 87 + Centrar_Texto(e, "Dirección", Fuente, 35)
+            'Pt.X = MargenIzq + 87 + Centrar_Texto(e, "Dirección", Fuente, 35) 'AVA 20250512
+            Pt.X = MargenIzq + 102 + Centrar_Texto(e, "Dirección", Fuente, 35) 'AVA 20250512
+
             e.Graphics.DrawString("Dirección", Fuente, Brushes.Black, Pt)
             Pt.X = MargenIzq + 122 + Centrar_Texto(e, "Marcado UE", Fuente, 18)
             'e.Graphics.DrawString("Marcado UE", Fuente, Brushes.Black, Pt)
@@ -539,10 +546,14 @@ Class Impresora
 
         Linea += 8
 
-        e.Graphics.DrawRectangle(Raya, 3, Linea, 17, 8)
-        e.Graphics.DrawRectangle(Raya, 3 + 17, Linea, 40, 8)
-        e.Graphics.DrawRectangle(Raya, 3 + 57, Linea, 30, 8)
-        e.Graphics.DrawRectangle(Raya, 3 + 87, Linea, 57, 8)
+        'Cuadrados
+        e.Graphics.DrawRectangle(Raya, 3, Linea, 17, 8) 'Referencia
+        e.Graphics.DrawRectangle(Raya, 3 + 17, Linea, 40, 8) 'Nombre del producto
+        'e.Graphics.DrawRectangle(Raya, 3 + 57, Linea, 30, 8) 'Fabricante 'AVA 20250512
+        'e.Graphics.DrawRectangle(Raya, 3 + 87, Linea, 57, 8) 'Dirección 'AVA 20250512
+        e.Graphics.DrawRectangle(Raya, 3 + 57, Linea, 45, 8) 'Fabricante  'AVA 20250512
+        e.Graphics.DrawRectangle(Raya, 3 + 102, Linea, 42, 8) 'Dirección 'AVA 20250512
+
         'e.Graphics.DrawRectangle(Raya, 3 + 122, Linea, 22, 8)
 
         Fuente = New System.Drawing.Font("Arial", 7, FontStyle.Regular)
@@ -560,7 +571,7 @@ Class Impresora
             e.Graphics.DrawString(Texto(1), Fuente, Brushes.Black, Pt)
         End If
 
-        Trocear_Texto(e, dt.Item("Sub_Fabricante"), Fuente, 30, Texto)
+        Trocear_Texto(e, dt.Item("Sub_Fabricante"), Fuente, 42, Texto)
         Pt.Y = Linea + 1
         Pt.X = 62
         e.Graphics.DrawString(Texto(0), Fuente, Brushes.Black, Pt)
@@ -569,9 +580,10 @@ Class Impresora
             e.Graphics.DrawString(Texto(1), Fuente, Brushes.Black, Pt)
         End If
 
-        Trocear_Texto(e, dt.Item("Sub_Fabricante_Dir"), Fuente, 35, Texto)
+        Trocear_Texto(e, dt.Item("Sub_Fabricante_Dir"), Fuente, 40, Texto)
         Pt.Y = Linea + 1
-        Pt.X = 92
+        'Pt.X = 92 'AVA 20250512
+        Pt.X = 107 'AVA 20250512
         e.Graphics.DrawString(Texto(0), Fuente, Brushes.Black, Pt)
         If Texto.Length > 1 Then
             Pt.Y = Pt.Y + 3
